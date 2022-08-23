@@ -66,48 +66,30 @@ const activeDifficultyButtons = (event) => {
   }
 };
 
-
-
 ancientsContainer.addEventListener('click', activeAncient);
 difficultyButtonsContainer.addEventListener('click', activeDifficultyButtons);
 
-let randomNumArr = [];
-
-// const getFirstGreenCardsImgNum = () => {
-//   let num =  Math.floor(Math.random() * (max - min + 1)) + min;
-//   randomNumArr.push(num);
-//   getGreenCardsImgNum();
-//   return randomNumArr;
-// }
-
-const getGreenCardsImgNum = () => {
+const getGreenCardsImgArr = () => {
   const min = Math.ceil(0);
   const max = Math.floor(17);
-  for (let i = 1; i <= ancientsData[gameInformation.numInArr].allGreenCardsCount; i++) {
-    let num =  Math.floor(Math.random() * (max - min + 1)) + min;
-    console.log(num);
-    if (randomNumArr.length === 0)
-      randomNumArr.push(num);
-    else if (randomNumArr.includes(num)) {
-      console.log('проверка');
-      getGreenCardsImgNum();
-    } else {
-      randomNumArr.push(num);
+  let randomImgArr = [];
+  let check;
+
+  for (let i = 0; i < ancientsData[gameInformation.numInArr].allGreenCardsCount; i++) {
+    do {
+      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
+      check = randomImgArr.includes(greenCardsData[num].cardFace);
+      if(!check){
+        randomImgArr.push(greenCardsData[num].cardFace);      
+      }
     }
+    while(check);
   }
-  console.log(randomNumArr);
-  return randomNumArr;
+  console.log(randomImgArr);
+  return randomImgArr;
 }
 
-// const getGreenCardsImgArr = () => {
-//   let allGreenCardsImgArr = [];
-//   for (let i = 0; i <= 17; i++) {
-//     allGreenCardsImgArr.push(greenCardsData[i].cardFace);
-//   }
 
-//   console.log(allGreenCardsImgArr);
-//   return allGreenCardsImgArr;
-// };
 
 
 
@@ -123,8 +105,8 @@ const chooseCards = () => {
         break;
       case difficulties[2].id :
         // console.log(difficulties[2].id);
-        getGreenCardsImgNum();
-        // getGreenCardsImgArr();
+        getGreenCardsImgArr();
+
         break;
       case difficulties[3].id :
         console.log(difficulties[3].id);
@@ -151,3 +133,38 @@ const visiableDeckContainer = () => {
 
 deckButton.addEventListener('click', visiableDeckContainer);
 
+
+
+
+
+
+
+
+
+
+
+
+  // for (let i = iNum; i < ancientsData[gameInformation.numInArr].allGreenCardsCount; i++) {
+  //   iNum = i;
+  //   let num =  Math.floor(Math.random() * (max - min + 1)) + min;
+  //   if (randomNumArr.length === ancientsData[gameInformation.numInArr].allGreenCardsCount) {
+  //     return;
+  //   } else if (randomNumArr.includes(num)) {
+  //     getGreenCardsImgArr();
+  //   } else if (randomNumArr.length <= ancientsData[gameInformation.numInArr].allGreenCardsCount) {
+  //     // randomNumArr.push(greenCardsData[num].cardFace);
+  //     randomNumArr.push(num);
+  //   } 
+  // }
+  // console.log(randomNumArr);
+  // return randomNumArr;
+
+  // const getGreenCardsImgArr = () => {
+//   let allGreenCardsImgArr = [];
+//   for (let i = 0; i <= 17; i++) {
+//     allGreenCardsImgArr.push(greenCardsData[i].cardFace);
+//   }
+
+//   console.log(allGreenCardsImgArr);
+//   return allGreenCardsImgArr;
+// };
