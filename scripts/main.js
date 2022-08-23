@@ -72,27 +72,81 @@ difficultyButtonsContainer.addEventListener('click', activeDifficultyButtons);
 const getGreenCardsImgArr = () => {
   const min = Math.ceil(0);
   const max = Math.floor(17);
-  let randomImgArr = [];
+  let randomGreenImgArr = [];
   let check;
 
   for (let i = 0; i < ancientsData[gameInformation.numInArr].allGreenCardsCount; i++) {
     do {
       let num =  Math.floor(Math.random() * (max - min + 1)) + min;
-      check = randomImgArr.includes(greenCardsData[num].cardFace);
+      check = randomGreenImgArr.includes(greenCardsData[num].cardFace);
       if(!check){
-        randomImgArr.push(greenCardsData[num].cardFace);      
+        randomGreenImgArr.push(greenCardsData[num].cardFace);      
       }
     }
     while(check);
   }
-  console.log(randomImgArr);
-  return randomImgArr;
+  return randomGreenImgArr;
+}
+
+const getBrownCardsImgArr = () => {
+  const min = Math.ceil(0);
+  const max = Math.floor(20);
+  let randomBrownImgArr = [];
+  let check;
+
+  for (let i = 0; i < ancientsData[gameInformation.numInArr].allBrownCardsCount; i++) {
+    do {
+      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
+      check = randomBrownImgArr.includes(brownCardsData[num].cardFace);
+      if(!check){
+        randomBrownImgArr.push(brownCardsData[num].cardFace);      
+      }
+    }
+    while(check);
+  }
+  return randomBrownImgArr;
+}
+
+const getBlueCardsImgArr = () => {
+  const min = Math.ceil(0);
+  const max = Math.floor(11);
+  let randomBlueImgArr = [];
+  let check;
+
+  for (let i = 0; i < ancientsData[gameInformation.numInArr].allBlueCardsCount; i++) {
+    do {
+      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
+      check = randomBlueImgArr.includes(blueCardsData[num].cardFace);
+      if(!check){
+        randomBlueImgArr.push(blueCardsData[num].cardFace);      
+      }
+    }
+    while(check);
+  }
+  return randomBlueImgArr;
+}
+
+const getImgArr = () => {
+  let allChosenCardsArr = [];
+
+  allChosenCardsArr.push(getGreenCardsImgArr());
+  allChosenCardsArr.push(getBrownCardsImgArr());
+  allChosenCardsArr.push(getBlueCardsImgArr());
+
+  return allChosenCardsArr;
 }
 
 
+const getCardsForFirstStage = () => {
+  let firstStageArr = [];
+  let allChosenCardsArr = getImgArr();
 
 
+  for (let i = 0; i < ancientsData[gameInformation.numInArr].firstStage.greenCards; i++) {
+    firstStageArr.push(allChosenCardsArr[0][0].pop);
+  }
 
+}
 
 const chooseCards = () => {
   if (gameInformation.idGod === ancientsData[0].id) {
@@ -105,8 +159,8 @@ const chooseCards = () => {
         break;
       case difficulties[2].id :
         // console.log(difficulties[2].id);
-        getGreenCardsImgArr();
-
+        getImgArr();
+        getCardsForFirstStage();
         break;
       case difficulties[3].id :
         console.log(difficulties[3].id);
