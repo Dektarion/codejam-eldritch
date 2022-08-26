@@ -102,7 +102,8 @@ const activeAncient = (event) => {
     randomCardsArr = [];
     getCardsArr(counterOfCards);
     cardPlace.style.backgroundImage = ``;
-    console.clear();
+    // console.clear();
+    console.log(randomCardsArr);
   }
 };
 
@@ -110,7 +111,53 @@ ancientsContainer.addEventListener('click', activeAncient);
 
 /* Выбор сложности */
 
-const getCardsofDifficulty = () => {
+const getEasyDifficulty = () => {
+  randomCardsArr.forEach((element, index) => {
+    console.log('1 элемент', element);
+    if (element.difficulty === 'hard') {
+      console.log('2 элемент с щупальцем', element);
+      let colorOfCard = element.color;
+      let obj = [];
+      let checkIncl1 = Boolean;
+      let checkIncl2 = Boolean;
+      let checkDiff = Boolean;
+      let num = 0;
+
+      if (colorOfCard === 'green') {
+        obj = greenCardsData;
+      } else if (colorOfCard === 'brown') {
+        obj = brownCardsData;
+      } else if (colorOfCard === 'blue') {
+        obj = blueCardsData;
+      } 
+      
+      max = Object.keys(obj).length - 1;
+
+      do {
+        num =  Math.floor(Math.random() * (max - min + 1)) + min;
+        console.log('3 на что меняем', obj[num]);
+        checkIncl1 = randomCardsArr.includes(obj[num]);
+        checkIncl2 = !checkIncl1;
+        console.log('4 есть ли такой уже', checkIncl1);
+        checkDiff = obj[num].difficulty !== 'hard';
+        console.log('5 простая ли карта', checkDiff);
+        if(checkIncl2 && checkDiff){
+          console.log('6 совпадает ли с 2', randomCardsArr[index]);
+          randomCardsArr.splice(index, 1);
+          randomCardsArr.splice(index, 0, obj[num]);
+        }
+      }
+      while(!(checkIncl2 && checkDiff));
+      // console.log('6 итоговый массив', randomCardsArr);
+    }
+  });
+  console.log('7 итоговый массив', randomCardsArr);
+};
+
+const getCardsOfDifficulty = () => {
+  if (gameInformation.idDifficulty === 'easy') {
+    return getEasyDifficulty();
+  }
   if (gameInformation.idDifficulty === 'normal') {
     return;
   }
@@ -126,9 +173,9 @@ const activeDifficulty = (event) => {
     event.target.classList.add('difficulty__buttons_active');
     deckButtonDisplay.classList.remove('deck-button__display_hidden');
     deckContainer.classList.add('hidden');
-    getCardsofDifficulty();
+    getCardsOfDifficulty();
     cardPlace.style.backgroundImage = ``;
-    console.clear();
+    // console.clear();
   }
 };
 
