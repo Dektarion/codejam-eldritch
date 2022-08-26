@@ -32,10 +32,15 @@ const ancientsData = [
       blueCards: 0,
       allCards: 6,
     },
-    allCardsCount: 16,
+    cardsCount: {
+      0: 5,
+      1: 9,
+      2: 2,
+    },
     allGreenCardsCount: 5,
     allBrownCardsCount: 9,
     allBlueCardsCount: 2,
+    allCardsCount: 16,
   },
   {
     id: 'cthulhu',
@@ -68,10 +73,15 @@ const ancientsData = [
       blueCards: 0,
       allCards: 7,
     },
-    allCardsCount: 15,
+    cardsCount: {
+      0: 4,
+      1: 9,
+      2: 2,
+    },
     allGreenCardsCount: 4,
     allBrownCardsCount: 9,
     allBlueCardsCount: 2,
+    allCardsCount: 15,
   },
   {
     id: 'iogSothoth',
@@ -104,10 +114,15 @@ const ancientsData = [
       blueCards: 0,
       allCards: 7,
     },
-    allCardsCount: 16,
+    cardsCount: {
+      0: 5,
+      1: 9,
+      2: 2,
+    },
     allGreenCardsCount: 5,
     allBrownCardsCount: 9,
     allBlueCardsCount: 2,
+    allCardsCount: 16,
   },
   {
     id: 'shubNiggurath',
@@ -140,10 +155,15 @@ const ancientsData = [
       blueCards: 0,
       allCards: 6,
     },
-    allCardsCount: 16,
+    cardsCount: {
+      0: 6,
+      1: 8,
+      2: 2,
+    },
     allGreenCardsCount: 6,
     allBrownCardsCount: 8,
     allBlueCardsCount: 2,
+    allCardsCount: 16,
   },
 ];
 

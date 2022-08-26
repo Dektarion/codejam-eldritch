@@ -1,3 +1,4 @@
+import greenCardsAssets from '../assets/MythicCards/green/index.js';
 import ancientsData from '../data/ancients.js';
 import difficulties from '../data/difficulties.js';
 import blueCardsData from '../data/mythicCards/blue/index.js';
@@ -22,6 +23,16 @@ let gameInformation = {
   numGodInArr: null,
 };
 
+let randomCardsArr = [];
+let greenCardsArr = [];
+let brownCardsArr = [];
+let blueCarsdArr = [];
+let firstStageCardsArr = [];
+let secondStageCardsArr = [];
+let thirdStageCradsArr = [];
+let allStageCardsArr = [];
+let flattenStageArr = [];
+
 const addNumGod = (idOfGod) => {
   switch(idOfGod) {
     case ancientsData[0].id :
@@ -39,122 +50,102 @@ const addNumGod = (idOfGod) => {
   }
 };
 
+/* Выбор нужного количества карт каждого цвета */
+
 const min = 0;
+let max = 0;
+let counterOfCards = 0;
+let counterForStages = 0;
+
+const getCardsArr = (counter) => {
+  let check = [];
+  let obj = [];
+
+  if (counter === 0) {
+    obj = greenCardsData;
+  } else if (counter === 1) {
+    obj = brownCardsData;
+  } else if (counter === 2) {
+    obj = blueCardsData;
+  } else {
+    return randomCardsArr;
+  }
+  
+  max = Object.keys(obj).length - 1;
+
+  for (let i = 0; i < ancientsData[gameInformation.numGodInArr].cardsCount[counter]; i++) {
+    do {
+      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
+      check = randomCardsArr.includes(obj[num]);
+      if(!check){
+        randomCardsArr.push(obj[num]);      
+      }
+    }
+    while(check);
+  }
+  counter++;
+  getCardsArr(counter);
+};
 
 /* Выбор древнего */
 
 const activeAncient = (event) => {
-  for (let element of ancients) {
+  ancients.forEach((element) => {
     element.classList.remove('active_ancient');
-  }
+  });
   if (event.target.classList.contains('ancients')) {
     gameInformation.idGod = event.target.id;
     addNumGod(gameInformation.idGod);
     event.target.classList.add('active_ancient');
     difficultyButtonsContainer.classList.remove('difficulty__display_hidden');
     deckContainer.classList.add('hidden');
+    randomCardsArr = [];
+    getCardsArr(counterOfCards);
+    cardPlace.style.backgroundImage = ``;
+    console.clear();
   }
 };
 
+ancientsContainer.addEventListener('click', activeAncient);
+
 /* Выбор сложности */
 
-const activeDifficultyButtons = (event) => {
-  for (let element of difficultyButtons) {
-    element.classList.remove('difficulty__buttons_active');
+const getCardsofDifficulty = () => {
+  if (gameInformation.idDifficulty === 'normal') {
+    return;
   }
+};
+
+
+const activeDifficulty = (event) => {
+  difficultyButtons.forEach((element) => {
+    element.classList.remove('difficulty__buttons_active');
+  });
   if (event.target.classList.contains('difficulty__buttons')) {
     gameInformation.idDifficulty = event.target.id;
     event.target.classList.add('difficulty__buttons_active');
     deckButtonDisplay.classList.remove('deck-button__display_hidden');
     deckContainer.classList.add('hidden');
-    console.log(gameInformation);
+    getCardsofDifficulty();
   }
 };
 
-ancientsContainer.addEventListener('click', activeAncient);
-difficultyButtonsContainer.addEventListener('click', activeDifficultyButtons);
+difficultyButtonsContainer.addEventListener('click', activeDifficulty);
 
-/* Показ колоды и трекера карт */
+/* Показ колоды, трекера карт и замешевания карт на 3 этапа */
 
-const visiableDeckContainer = () => {
-  deckContainer.classList.remove('hidden');
-  deckButtonDisplay.classList.add('deck-button__display_hidden');
-};
+/* Создание 3 стопок карт по цветам */
 
-shuffleButton.addEventListener('click', visiableDeckContainer);
-
-/* Выбор нужного количества карт каждого цвета */
-
-const getGreenCardsImgArr = () => {
-  const max = 17;
-  let randomGreenImgArr = [];
-  let check;
-
-  for (let i = 0; i < ancientsData[gameInformation.numGodInArr].allGreenCardsCount; i++) {
-    do {
-      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
-      check = randomGreenImgArr.includes(greenCardsData[num]);
-      if(!check){
-        randomGreenImgArr.push(greenCardsData[num]);      
-      }
-    }
-    while(check);
-  }
-  
-  return randomGreenImgArr;
-};
-
-const getBrownCardsImgArr = () => {
-  const max = 20;
-  let randomBrownImgArr = [];
-  let check;
-
-  for (let i = 0; i < ancientsData[gameInformation.numGodInArr].allBrownCardsCount; i++) {
-    do {
-      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
-      check = randomBrownImgArr.includes(brownCardsData[num]);
-      if(!check){
-        randomBrownImgArr.push(brownCardsData[num]);      
-      }
-    }
-    while(check);
-  }
-  
-  return randomBrownImgArr;
-};
-
-const getBlueCardsImgArr = () => {
-  const max = 11;
-  let randomBlueImgArr = [];
-  let check;
-
-  for (let i = 0; i < ancientsData[gameInformation.numGodInArr].allBlueCardsCount; i++) {
-    do {
-      let num =  Math.floor(Math.random() * (max - min + 1)) + min;
-      check = randomBlueImgArr.includes(blueCardsData[num]);
-      if(!check){
-        randomBlueImgArr.push(blueCardsData[num]);      
-      }
-    }
-    while(check);
-  }
-
-  return randomBlueImgArr;
-};
-
-/* Создание массива массивов отобранных карт*/
-
-const getImgArr = () => {
-  let allChosenCardsArr = [];
-  let greenCards = getGreenCardsImgArr();
-  let brownCards = getBrownCardsImgArr();
-  let blueCards = getBlueCardsImgArr();
-
-  allChosenCardsArr.push(greenCards);
-  allChosenCardsArr.push(brownCards);
-  allChosenCardsArr.push(blueCards);
-
-  return allChosenCardsArr;
+const gerColorDecks = () => {
+  randomCardsArr.forEach((card) => {
+    if (card.color === 'green') {
+      greenCardsArr.push(card);
+    } else if (card.color === 'brown') {
+      brownCardsArr.push(card);
+    } else if (card.color === 'blue') {
+      blueCarsdArr.push(card);
+    } 
+  });
 };
 
 /* Функция перемешивания карт внутри массива */
@@ -171,9 +162,7 @@ function shuffleArray(arr) {
   return shuffleArr;
 }
 
-/* Отбор карт для каждого этапа */
-
-// var allStageArrGlobal;
+/* Функция разворачивает массив в плоский */
 
 let arrAllValues = [];
 
@@ -189,111 +178,85 @@ const flattenArr = function(arr) {
   return arrAllValues;
 };
 
-const allStageArrObj = {
-  arrFlatten: [],
-};
 
-const getCardsForAllStage = () => {
-  let allStageArr = [];
-  let firstStageArr = [];
-  let secondStageArr = [];
-  let thirdStageArr = [];
-  let allChosenCardsArr = getImgArr();
+/* Создание массива карт для показа */
+
+const getCardsForStages = (counter) => {
+  let obj = [];
+  let arr = [];
+
+  if (counter === 0) {
+    obj = ancientsData[gameInformation.numGodInArr].firstStage;
+  } else if (counter === 1) {
+    obj = ancientsData[gameInformation.numGodInArr].secondStage;
+  } else if (counter === 2) {
+    obj = ancientsData[gameInformation.numGodInArr].thirdStage;
+  } else {
+    allStageCardsArr.push(shuffleArray(firstStageCardsArr));
+    allStageCardsArr.push(shuffleArray(secondStageCardsArr));
+    allStageCardsArr.push(shuffleArray(thirdStageCradsArr));
+
+    flattenStageArr = flattenArr(allStageCardsArr);
+
+    return flattenStageArr;
+  }
+
+// counter отвечает за stage
+// n отвечает за цвет
+// i отвечает за количество карт в цвете
 
   for (let n = 0; n <= 2; n++) {
-    for (let i = 0; i < ancientsData[gameInformation.numGodInArr].firstStage[n]; i++) {
-      let max = Math.floor(allChosenCardsArr[n].length);
+    for (let i = 0; i < obj[n]; i++) {
+      if (n === 0) {
+        arr = greenCardsArr;
+      } else if (n === 1) {
+        arr = brownCardsArr;
+      } else if (n === 2) {
+        arr = blueCarsdArr;
+      }
+      let max = Math.floor(arr.length);
       let index = Math.floor(Math.random() * max);
-      firstStageArr.push(allChosenCardsArr[n][index]);
-      allChosenCardsArr[n].splice(index, 1);
+      if (counter === 0) {
+        firstStageCardsArr.push(arr[index]);
+      } else if (counter === 1) {
+        secondStageCardsArr.push(arr[index]);
+      } else if (counter === 2) {
+        thirdStageCradsArr.push(arr[index]);
+      } 
+      arr.splice(index, 1);
     }
   }
-
-  for (let n = 0; n <= 2; n++) {
-    for (let i = 0; i < ancientsData[gameInformation.numGodInArr].secondStage[n]; i++) {
-      let max = Math.floor(allChosenCardsArr[n].length);
-      let index = Math.floor(Math.random() * max);
-      secondStageArr.push(allChosenCardsArr[n][index]);
-      allChosenCardsArr[n].splice(index, 1);
-    }
-  }
-
-  for (let n = 0; n <= 2; n++) {
-    for (let i = 0; i < ancientsData[gameInformation.numGodInArr].thirdStage[n]; i++) {
-      let max = Math.floor(allChosenCardsArr[n].length);
-      let index = Math.floor(Math.random() * max);
-      thirdStageArr.push(allChosenCardsArr[n][index]);
-      allChosenCardsArr[n].splice(index, 1);
-    }
-  }
-
-  allStageArr.push(shuffleArray(firstStageArr));
-  allStageArr.push(shuffleArray(secondStageArr));
-  allStageArr.push(shuffleArray(thirdStageArr));
-  
-  console.log(allStageArr);
-
-  allStageArrObj.arrFlatten = flattenArr(allStageArr);
-
-  // return flattenArr(allStageArr);
-  return allStageArrObj;
+  counter++;
+  getCardsForStages(counter);
 };
 
-// allStageArrObj.arrFlatten = getCardsForAllStage();
-
-const chooseCards = () => {
-  switch(gameInformation.idDifficulty) {
-    case difficulties[0].id :
-
-      break;
-    case difficulties[1].id :
-
-      break;
-    case difficulties[2].id :
-      getCardsForAllStage();
-      break;
-    case difficulties[3].id :
-
-      break;
-    case difficulties[4].id :
-
-      break;
-  }
+const visiableDeckContainer = () => {
+  deckContainer.classList.remove('hidden');
+  deckButtonDisplay.classList.add('deck-button__display_hidden');
+  greenCardsArr = [];
+  brownCardsArr = [];
+  blueCarsdArr = [];
+  gerColorDecks();
+  arrAllValues = [];
+  firstStageCardsArr = [];
+  secondStageCardsArr = [];
+  thirdStageCradsArr = [];
+  allStageCardsArr = [];
+  flattenStageArr = [];
+  getCardsForStages(counterForStages);
 };
 
-shuffleButton.addEventListener('click', () => {
-  allStageArrObj.arrFlatten = [];
-  chooseCards();
-  });
+shuffleButton.addEventListener('click', visiableDeckContainer);
 
-/* Показ карт */
 
 const setBg = () => {
-  console.log(allStageArrObj.arrFlatten);
-
-  if (allStageArrObj.arrFlatten.length > 0) {
-    cardPlace.style.backgroundImage = `url('${allStageArrObj.arrFlatten[0].cardFace}')`;
-    allStageArrObj.arrFlatten.shift(allStageArrObj.arrFlatten[0]);
+  if (flattenStageArr.length > 0) {
+    cardPlace.style.backgroundImage = `url('${flattenStageArr[0].cardFace}')`;
+    console.log(flattenStageArr[0].id, flattenStageArr[0].difficulty);
+    flattenStageArr.shift(flattenStageArr[0]);
   } else {
-    cardPlace.style.backgroundImage = `url('null')`;
+    cardPlace.style.backgroundImage = ``;
   }
 };
 
 deskBackground.addEventListener('click', setBg);
-
-
-// const state = {
-//   deck: []
-// }
-// state.deck = shuffleDeck();
-
-// zameshat'Button.addEventlistener('click', () => {
-//   state.deck = [];
-//   TVOY CODE...;
-// })
-
-/*просто на клик по сложности задать массив = []. тогда в следующую игру не пойдут
- недоигранные карты. Мож, у вас их много, и вы просто запутались в них, и не все обнуляете? 
- у меня их несколько, я все обнуляю */
-
-/* повесить обнуление на кнопку генерации колоды */
