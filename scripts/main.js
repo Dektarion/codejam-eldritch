@@ -127,6 +127,8 @@ const activeDifficulty = (event) => {
     deckButtonDisplay.classList.remove('deck-button__display_hidden');
     deckContainer.classList.add('hidden');
     getCardsofDifficulty();
+    cardPlace.style.backgroundImage = ``;
+    console.clear();
   }
 };
 
