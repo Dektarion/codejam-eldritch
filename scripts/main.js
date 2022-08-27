@@ -14,6 +14,7 @@ const deckContainer = document.querySelector('.deck__container');
 const shuffleButton = document.querySelector('.shuffle-button');
 const cardPlace = document.querySelector('.card');
 const deckBackground = document.querySelector('.deck');
+const stagesText = document.querySelectorAll('.stage');
 const firstGreen = document.getElementById('firstgreen');
 const firstBrown = document.getElementById('firstbrown');
 const firstBlue = document.getElementById('firstblue');
@@ -23,6 +24,9 @@ const secondBlue = document.getElementById('secondblue');
 const thirdGreen = document.getElementById('thirdgreen');
 const thirdBrown = document.getElementById('thirdbrown');
 const thirdBlue = document.getElementById('thirdblue');
+const trackerDeck = document.querySelectorAll('.deck_oppacity');
+const rusButton = document.querySelector('.rus');
+const engButton = document.querySelector('.eng');
 
 /* Информация для циклов */
 
@@ -56,6 +60,37 @@ const addNumGod = (idOfGod) => {
     case ancientsData[3].id :
       gameInformation.numGodInArr = 3;
       break;
+  }
+};
+
+/* Информация для перевода */
+
+let language = 'rus';
+
+const textForTranslate = {
+  rus: {
+    diff1: 'Очень легкая',
+    diff2: 'Легкая',
+    diff3: 'Нормальная',
+    diff4: 'Сложная',
+    diff5: 'Очень Сложная',
+    shuff: 'Замешать колоду',
+    stage1: 'Первая стадия',
+    stage2: 'Вторая стадия',
+    stage3: 'Третья стадия',
+    end: 'Колода закончилась',
+  },
+  eng: {
+    diff1: 'Very easy',
+    diff2: 'Easy',
+    diff3: 'Normal',
+    diff4: 'Hard',
+    diff5: 'Very hard',
+    shuff: 'Knead the deck',
+    stage1: 'First stage',
+    stage2: 'Second stage',
+    stage3: 'Third stage',
+    end: 'The deck is over',
   }
 };
 
@@ -273,8 +308,6 @@ const getVeryEasyHardDifficulty = () => {
   return randomCardsArr;
 };
 
-
-
 const getCardsOfDifficulty = () => {
   if (gameInformation.idDifficulty === 'veryeasy') {
     exclude = 'hard';
@@ -297,7 +330,6 @@ const getCardsOfDifficulty = () => {
   }
 };
 
-
 const activeDifficulty = (event) => {
   difficultyButtons.forEach((element) => {
     element.classList.remove('difficulty__buttons_active');
@@ -317,12 +349,11 @@ const activeDifficulty = (event) => {
     getCardsOfDifficulty();
     cardPlace.style.backgroundImage = ``;
     console.log(`Выбран Древний ${gameInformation.idGod.charAt(0).toUpperCase()}${gameInformation.idGod.slice(1)} и сложность ${gameInformation.idDifficulty.charAt(0).toUpperCase()}${gameInformation.idDifficulty.slice(1)}!`);
+    trackerOppacity();
   }
 };
 
 difficultyButtonsContainer.addEventListener('click', activeDifficulty);
-
-/* Показ колоды, трекера карт и замешевания карт на 3 этапа */
 
 /* Создание 3 стопок карт по цветам */
 
@@ -464,6 +495,14 @@ const getCardsForStages = (counter) => {
   getCardsForStages(counter);
 };
 
+/* Прозрачность трекера */
+
+const trackerOppacity = () => {
+  trackerDeck.forEach((element) => {
+    element.classList.add('deck_oppacity');
+  });
+};
+
 /* Трекер карт */
 
 const trackerCards = (card, counter) => {
@@ -479,6 +518,8 @@ const trackerCards = (card, counter) => {
       firstBlue.textContent = firstBlueCards;
     }
   } else if (counter > firstAllCards && counter <= (firstAllCards + secondAllCards)) {
+    trackerDeck[0].classList.add('deck_oppacity');
+    trackerDeck[1].classList.remove('deck_oppacity');
     if (card.color === 'green') {
       secondGreenCards--;
       secondGreen.textContent = secondGreenCards;
@@ -490,6 +531,8 @@ const trackerCards = (card, counter) => {
       secondBlue.textContent = secondBlueCards;
     }
   } else {
+    trackerDeck[1].classList.add('deck_oppacity');
+    trackerDeck[2].classList.remove('deck_oppacity');
     if (card.color === 'green') {
       thirdGreenCards--;
       thirdGreen.textContent = thirdGreenCards;
@@ -503,25 +546,68 @@ const trackerCards = (card, counter) => {
   }
 };
 
-
 /* Показ карт из колоды */
 
 let counterOfClicks = 0;
 
 const setBg = () => {
   counterOfClicks++;
-  if (flattenStageArr.length > 0) {
+  if (flattenStageArr.length >= 2) {
     cardPlace.style.backgroundImage = `url('${flattenStageArr[0].cardFace}')`;
     console.log(flattenStageArr[0].id, flattenStageArr[0].difficulty);
     trackerCards(flattenStageArr[0], counterOfClicks);
     flattenStageArr.shift(flattenStageArr[0]);
   } else {
+    cardPlace.style.backgroundImage = `url('${flattenStageArr[0].cardFace}')`;
+    console.log(flattenStageArr[0].id, flattenStageArr[0].difficulty);
+    trackerCards(flattenStageArr[0], counterOfClicks);
+    flattenStageArr.shift(flattenStageArr[0]);
+    trackerDeck[2].classList.add('deck_oppacity');
     deckBackground.style.backgroundImage = `url('')`;
-    deckBackground.textContent = 'Колода закончилась';
+    if (language === 'rus') {
+      deckBackground.textContent = 'Колода закончилась';
+    } else {
+      deckBackground.textContent = 'The deck is over';
+    }
+    deckBackground.classList.add('no-click');
   }
 };
 
 deckBackground.addEventListener('click', setBg);
+
+const traslateText = (language) => {
+  difficultyButtons[0].textContent = textForTranslate[language].diff1;
+  difficultyButtons[1].textContent = textForTranslate[language].diff2;
+  difficultyButtons[2].textContent = textForTranslate[language].diff3;
+  difficultyButtons[3].textContent = textForTranslate[language].diff4;
+  difficultyButtons[4].textContent = textForTranslate[language].diff5;
+  shuffleButton.textContent = textForTranslate[language].shuff;
+  stagesText[0].textContent = textForTranslate[language].stage1;
+  stagesText[1].textContent = textForTranslate[language].stage2;
+  stagesText[2].textContent = textForTranslate[language].stage3;
+  if (language === 'rus') {
+    rusButton.classList.add('language-active');
+    engButton.classList.remove('language-active');
+  } else {
+    rusButton.classList.remove('language-active');
+    engButton.classList.add('language-active');
+  }
+  if (flattenStageArr.length < 2){
+    deckBackground.textContent = textForTranslate[language].end;
+  }
+};
+
+traslateText(language);
+
+rusButton.addEventListener('click', () => {
+  language = 'rus';
+  traslateText(language);
+});
+
+engButton.addEventListener('click', () => {
+  language = 'eng';
+  traslateText(language);
+});
 
 const visiableDeckContainer = () => {
   deckContainer.classList.remove('hidden');
@@ -541,6 +627,8 @@ const visiableDeckContainer = () => {
   deckBackground.style.backgroundImage = `url(./assets/${gameInformation.idGod}.jpg)`;
   deckBackground.textContent = '';
   counterOfClicks = 0;
+  trackerDeck[0].classList.remove('deck_oppacity');
+  deckBackground.classList.remove('no-click');
 };
 
 shuffleButton.addEventListener('click', visiableDeckContainer);
