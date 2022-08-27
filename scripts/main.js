@@ -13,7 +13,7 @@ const deckButtonDisplay = document.querySelector('.deck-button__display');
 const deckContainer = document.querySelector('.deck__container');
 const shuffleButton = document.querySelector('.shuffle-button');
 const cardPlace = document.querySelector('.card');
-const deskBackground = document.querySelector('.deck');
+const deckBackground = document.querySelector('.deck');
 
 /* Информация для циклов */
 
@@ -99,11 +99,7 @@ const activeAncient = (event) => {
     event.target.classList.add('active_ancient');
     difficultyButtonsContainer.classList.remove('difficulty__display_hidden');
     deckContainer.classList.add('hidden');
-    randomCardsArr = [];
-    getCardsArr(counterOfCards);
     cardPlace.style.backgroundImage = ``;
-    // console.clear();
-    console.log(randomCardsArr);
   }
 };
 
@@ -111,11 +107,11 @@ ancientsContainer.addEventListener('click', activeAncient);
 
 /* Выбор сложности */
 
-const getEasyDifficulty = () => {
+let exclude = '';
+
+const getEasyHardDifficulty = () => {
   randomCardsArr.forEach((element, index) => {
-    console.log('1 элемент', element);
-    if (element.difficulty === 'hard') {
-      console.log('2 элемент с щупальцем', element);
+    if (element.difficulty === exclude) {
       let colorOfCard = element.color;
       let obj = [];
       let checkIncl1 = Boolean;
@@ -135,14 +131,53 @@ const getEasyDifficulty = () => {
 
       do {
         num =  Math.floor(Math.random() * (max - min + 1)) + min;
-        console.log('3 на что меняем', obj[num]);
         checkIncl1 = randomCardsArr.includes(obj[num]);
         checkIncl2 = !checkIncl1;
-        console.log('4 есть ли такой уже', checkIncl1);
-        checkDiff = obj[num].difficulty !== 'hard';
-        console.log('5 простая ли карта', checkDiff);
+        checkDiff = obj[num].difficulty !== exclude;
         if(checkIncl2 && checkDiff){
-          console.log('6 совпадает ли с 2', randomCardsArr[index]);
+          randomCardsArr.splice(index, 1);
+          randomCardsArr.splice(index, 0, obj[num]);
+        }
+      }
+      while(!(checkIncl2 && checkDiff));
+    }
+  });
+  return randomCardsArr;
+};
+
+
+const getVeryEasyHardDifficulty = () => {
+  randomCardsArr.forEach((element, index) => {
+    // console.log('1 элемент', element);
+    if (element.difficulty === exclude) {
+      // console.log('2 элемент с щупальцем', element);
+      let colorOfCard = element.color;
+      let obj = [];
+      let checkIncl1 = Boolean;
+      let checkIncl2 = Boolean;
+      let checkDiff = Boolean;
+      let num = 0;
+
+      if (colorOfCard === 'green') {
+        obj = greenCardsData;
+      } else if (colorOfCard === 'brown') {
+        obj = brownCardsData;
+      } else if (colorOfCard === 'blue') {
+        obj = blueCardsData;
+      } 
+      
+      max = Object.keys(obj).length - 1;
+
+      do {
+        num =  Math.floor(Math.random() * (max - min + 1)) + min;
+        // console.log('3 на что меняем', obj[num]);
+        checkIncl1 = randomCardsArr.includes(obj[num]);
+        checkIncl2 = !checkIncl1;
+        // console.log('4 есть ли такой уже', checkIncl1);
+        checkDiff = obj[num].difficulty !== exclude;
+        // console.log('5 простая ли карта', checkDiff);
+        if(checkIncl2 && checkDiff){
+          // console.log('6 совпадает ли с 2', randomCardsArr[index]);
           randomCardsArr.splice(index, 1);
           randomCardsArr.splice(index, 0, obj[num]);
         }
@@ -151,15 +186,23 @@ const getEasyDifficulty = () => {
       // console.log('6 итоговый массив', randomCardsArr);
     }
   });
-  console.log('7 итоговый массив', randomCardsArr);
+  // console.log('7 итоговый массив', randomCardsArr);
+  return randomCardsArr;
 };
+
+
 
 const getCardsOfDifficulty = () => {
   if (gameInformation.idDifficulty === 'easy') {
-    return getEasyDifficulty();
+    exclude = 'hard';
+    return getEasyHardDifficulty();
   }
   if (gameInformation.idDifficulty === 'normal') {
     return;
+  }
+  if (gameInformation.idDifficulty === 'hard') {
+    exclude = 'easy';
+    return getEasyHardDifficulty();
   }
 };
 
@@ -173,9 +216,11 @@ const activeDifficulty = (event) => {
     event.target.classList.add('difficulty__buttons_active');
     deckButtonDisplay.classList.remove('deck-button__display_hidden');
     deckContainer.classList.add('hidden');
+    randomCardsArr = [];
+    getCardsArr(counterOfCards);
     getCardsOfDifficulty();
     cardPlace.style.backgroundImage = ``;
-    // console.clear();
+    console.log(`Выбран Древний ${gameInformation.idGod.charAt(0).toUpperCase()}${gameInformation.idGod.slice(1)} и сложность ${gameInformation.idDifficulty.charAt(0).toUpperCase()}${gameInformation.idDifficulty.slice(1)}!`);
   }
 };
 
@@ -279,6 +324,19 @@ const getCardsForStages = (counter) => {
   getCardsForStages(counter);
 };
 
+const setBg = () => {
+  if (flattenStageArr.length > 0) {
+    cardPlace.style.backgroundImage = `url('${flattenStageArr[0].cardFace}')`;
+    console.log(flattenStageArr[0].id, flattenStageArr[0].difficulty);
+    flattenStageArr.shift(flattenStageArr[0]);
+  } else {
+    deckBackground.style.backgroundImage = `url('')`;
+    deckBackground.textContent = 'Все карты были перебраны';
+  }
+};
+
+deckBackground.addEventListener('click', setBg);
+
 const visiableDeckContainer = () => {
   deckContainer.classList.remove('hidden');
   deckButtonDisplay.classList.add('deck-button__display_hidden');
@@ -293,19 +351,9 @@ const visiableDeckContainer = () => {
   allStageCardsArr = [];
   flattenStageArr = [];
   getCardsForStages(counterForStages);
+  deckBackground.style.backgroundImage = `url(./assets/${gameInformation.idGod}.jpg)`;
+  deckBackground.textContent = '';
 };
 
 shuffleButton.addEventListener('click', visiableDeckContainer);
 
-
-const setBg = () => {
-  if (flattenStageArr.length > 0) {
-    cardPlace.style.backgroundImage = `url('${flattenStageArr[0].cardFace}')`;
-    console.log(flattenStageArr[0].id, flattenStageArr[0].difficulty);
-    flattenStageArr.shift(flattenStageArr[0]);
-  } else {
-    cardPlace.style.backgroundImage = ``;
-  }
-};
-
-deskBackground.addEventListener('click', setBg);

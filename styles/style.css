@@ -10,7 +10,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  background: url(../assets/home.png);
+  background: url(../assets/bg.jpg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -70,7 +70,7 @@ body {
 }
 
 .active_ancient {
-  border: 2px solid rgb(226, 160, 74);
+  border: 2px solid rgb(36, 153, 231);
 }
 
 .difficulty__display {
@@ -84,13 +84,16 @@ body {
 
 .difficulty__buttons {
   width: 150px;
-  height: 25px;
+  height: 55px;
   background-color: rgba(255, 255, 255, 0.1);
   border: 2px solid rgba(255, 255, 255, 0.4);
   cursor: pointer;
-  font-weight: 700;
+  font-family: 'Rubik Wet Paint', cursive;
+  font-size: 20px;
+  font-weight: 400;
   border-radius: 10px;
-  color: white;
+  color: rgb(204, 193, 193);
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
 }
 
 .difficulty__buttons_active {
@@ -108,20 +111,23 @@ body {
 }
 
 .shuffle-button {
-  background-color: rgb(99, 236, 191);
+  background-color: rgba(99, 236, 191, 0.3);
   border-radius: 10px;
   border: 1px solid white;
   width: 150px;
-  height: 35px;
-  font-size: 14px;
-  font-weight: 700;
+  height: 55px;
+  font-family: 'Rubik Wet Paint', cursive;
+  font-size: 20px;
+  font-weight: 400;
+  color: rgb(231, 219, 218);
+  text-shadow: 1px 1px 1px rgb(0, 0, 0);
   cursor: pointer;
   transition: 0.2s;
 }
 
 .shuffle-button:hover,
 .shuffle-button:active {
-  background-color: rgb(99, 147, 236);
+  background-color: rgba(99, 147, 236, 0.3);
 }
 
 .deck-button__display_hidden {
@@ -186,14 +192,22 @@ body {
 }
 
 .deck {
-  width: 190px;
-  height: 280px;
-  background-image: url(../assets/mythicCardBackground.png);
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-align: center;
+  width: 230px;
+  height: 320px;
+  /* background-image: url(../assets/mythicCardBackground.png); */
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 2px solid rgb(92, 226, 74);
+  border: 2px solid rgb(240, 116, 116);
   border-radius: 10px;
+  font-family: 'Rubik Wet Paint', cursive;
+  font-size: 25px;
+  font-weight: 400;
+  color: rgb(240, 116, 116);
   cursor: pointer;
   transition: 0.2s;
 }
@@ -203,12 +217,12 @@ body {
 }
 
 .card {
-  width: 190px;
-  height: 280px;
+  width: 230px;
+  height: 320px;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  border: 2px solid rgb(238, 74, 128);
+  border: 2px solid rgb(92, 226, 74);
   border-radius: 10px;
   text-align: center;
   font-size: 20px;
