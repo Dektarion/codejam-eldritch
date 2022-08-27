@@ -368,6 +368,48 @@ const flattenArr = function(arr) {
   return arrAllValues;
 };
 
+/* Прописывание количества карт в трекере */
+
+let firstGreenCards = 0;
+let firstBrownCards = 0;
+let firstBlueCards = 0;
+let firstAllCards = 0;
+let secondGreenCards = 0;
+let secondBrownCards = 0;
+let secondBlueCards = 0;
+let secondAllCards = 0;
+let thirdGreenCards = 0;
+let thirdBrownCards = 0;
+let thirdBlueCards = 0;
+let thirdAllCards = 0;
+
+const getNumCardsForTracker = () => {
+  firstGreenCards = ancientsData[gameInformation.numGodInArr].firstStage.greenCards;
+  firstBrownCards = ancientsData[gameInformation.numGodInArr].firstStage.brownCards;
+  firstBlueCards = ancientsData[gameInformation.numGodInArr].firstStage.blueCards;
+  secondGreenCards = ancientsData[gameInformation.numGodInArr].secondStage.greenCards;
+  secondBrownCards = ancientsData[gameInformation.numGodInArr].secondStage.brownCards;
+  secondBlueCards = ancientsData[gameInformation.numGodInArr].secondStage.blueCards;
+  thirdGreenCards = ancientsData[gameInformation.numGodInArr].thirdStage.greenCards;
+  thirdBrownCards = ancientsData[gameInformation.numGodInArr].thirdStage.brownCards;
+  thirdBlueCards = ancientsData[gameInformation.numGodInArr].thirdStage.blueCards;
+  firstAllCards = ancientsData[gameInformation.numGodInArr].firstStage.allCards;
+  secondAllCards = ancientsData[gameInformation.numGodInArr].secondStage.allCards;
+  thirdAllCards = ancientsData[gameInformation.numGodInArr].thirdStage.allCards;
+};
+
+const getNumCardsInTracker = () => {
+  firstGreen.textContent = firstGreenCards;
+  firstBrown.textContent = firstBrownCards;
+  firstBlue.textContent = firstBlueCards;
+  secondGreen.textContent = secondGreenCards;
+  secondBrown.textContent = secondBrownCards;
+  secondBlue.textContent = secondBlueCards;
+  thirdGreen.textContent = thirdGreenCards;
+  thirdBrown.textContent = thirdBrownCards;
+  thirdBlue.textContent = thirdBlueCards;
+};
+
 
 /* Создание массива карт для показа */
 
@@ -382,47 +424,7 @@ const getCardsForStages = (counter) => {
   } else if (counter === 2) {
     obj = ancientsData[gameInformation.numGodInArr].thirdStage;
   } else {
-    for (let m = 0; m <= 2; m++){
-      let arr = [];
-      let arrFilter = [];
-      let color = '';
-      if (m === 0) {
-        arrFilter = firstStageCardsArr;
-      } else if (m === 1) {
-        arrFilter = secondStageCardsArr;
-      } else if (m === 2) {
-        arrFilter = thirdStageCradsArr;
-      }
-      for (let u = 0; u <= 2; u++) {
-        if (u === 0) {
-          color = 'green';
-        } else if (u === 1) {
-          color = 'brown';
-        } else if (u === 2) {
-          color = 'blue';
-        }
-        arr = arrFilter.filter(element => element.color === color);
-        if (m === 0 && u === 0) {
-          firstGreen.textContent = arr.length;
-        } else if (m === 0 && u === 1) {
-          firstBrown.textContent = arr.length;
-        } else if (m === 0 && u === 2) {
-          firstBlue.textContent = arr.length;
-        } else if (m === 1 && u === 0) {
-          secondGreen.textContent = arr.length;
-        } else if (m === 1 && u === 1) {
-          secondBrown.textContent = arr.length;
-        } else if (m === 1 && u === 2) {
-          secondBlue.textContent = arr.length;
-        } else if (m === 2 && u === 0) {
-          thirdGreen.textContent = arr.length;
-        } else if (m === 2 && u === 1) {
-          thirdBrown.textContent = arr.length;
-        } else if (m === 2 && u === 2) {
-          thirdBlue.textContent = arr.length;
-        } 
-      }
-    }
+    getNumCardsInTracker();
 
     allStageCardsArr.push(shuffleArray(firstStageCardsArr));
     allStageCardsArr.push(shuffleArray(secondStageCardsArr));
@@ -464,17 +466,58 @@ const getCardsForStages = (counter) => {
 
 /* Трекер карт */
 
+const trackerCards = (card, counter) => {
+  if (counter <= firstAllCards) {
+    if (card.color === 'green') {
+      firstGreenCards--;
+      firstGreen.textContent = firstGreenCards;
+    } else if (card.color === 'brown') {
+      firstBrownCards--;
+      firstBrown.textContent = firstBrownCards;
+    } else {
+      firstBlueCards--;
+      firstBlue.textContent = firstBlueCards;
+    }
+  } else if (counter > firstAllCards && counter <= (firstAllCards + secondAllCards)) {
+    if (card.color === 'green') {
+      secondGreenCards--;
+      secondGreen.textContent = secondGreenCards;
+    } else if (card.color === 'brown') {
+      secondBrownCards--;
+      secondBrown.textContent = secondBrownCards;
+    } else {
+      secondBlueCards--;
+      secondBlue.textContent = secondBlueCards;
+    }
+  } else {
+    if (card.color === 'green') {
+      thirdGreenCards--;
+      thirdGreen.textContent = thirdGreenCards;
+    } else if (card.color === 'brown') {
+      thirdBrownCards--;
+      thirdBrown.textContent = thirdBrownCards;
+    } else {
+      thirdBlueCards--;
+      thirdBlue.textContent = thirdBlueCards;
+    }
+  }
+};
 
 
+/* Показ карт из колоды */
+
+let counterOfClicks = 0;
 
 const setBg = () => {
+  counterOfClicks++;
   if (flattenStageArr.length > 0) {
     cardPlace.style.backgroundImage = `url('${flattenStageArr[0].cardFace}')`;
     console.log(flattenStageArr[0].id, flattenStageArr[0].difficulty);
+    trackerCards(flattenStageArr[0], counterOfClicks);
     flattenStageArr.shift(flattenStageArr[0]);
   } else {
     deckBackground.style.backgroundImage = `url('')`;
-    deckBackground.textContent = 'Все карты были перебраны';
+    deckBackground.textContent = 'Колода закончилась';
   }
 };
 
@@ -493,9 +536,11 @@ const visiableDeckContainer = () => {
   thirdStageCradsArr = [];
   allStageCardsArr = [];
   flattenStageArr = [];
+  getNumCardsForTracker();
   getCardsForStages(counterForStages);
   deckBackground.style.backgroundImage = `url(./assets/${gameInformation.idGod}.jpg)`;
   deckBackground.textContent = '';
+  counterOfClicks = 0;
 };
 
 shuffleButton.addEventListener('click', visiableDeckContainer);
