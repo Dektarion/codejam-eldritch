@@ -1,4 +1,4 @@
-import greenCardsAssets from '../assets/MythicCards/green/index.js';
+// import greenCardsAssets from '../assets/MythicCards/green/index.js';
 import ancientsData from '../data/ancients.js';
 import difficulties from '../data/difficulties.js';
 import blueCardsData from '../data/mythicCards/blue/index.js';
@@ -14,6 +14,15 @@ const deckContainer = document.querySelector('.deck__container');
 const shuffleButton = document.querySelector('.shuffle-button');
 const cardPlace = document.querySelector('.card');
 const deckBackground = document.querySelector('.deck');
+const firstGreen = document.getElementById('firstgreen');
+const firstBrown = document.getElementById('firstbrown');
+const firstBlue = document.getElementById('firstblue');
+const secondGreen = document.getElementById('secondgreen');
+const secondBrown = document.getElementById('secondbrown');
+const secondBlue = document.getElementById('secondblue');
+const thirdGreen = document.getElementById('thirdgreen');
+const thirdBrown = document.getElementById('thirdbrown');
+const thirdBlue = document.getElementById('thirdblue');
 
 /* Информация для циклов */
 
@@ -56,6 +65,7 @@ const min = 0;
 let max = 0;
 let counterOfCards = 0;
 let counterForStages = 0;
+let counerForEasyHardCards = 0;
 
 const getCardsArr = (counter) => {
   let check = [];
@@ -108,6 +118,7 @@ ancientsContainer.addEventListener('click', activeAncient);
 /* Выбор сложности */
 
 let exclude = '';
+let include = '';
 
 const getEasyHardDifficulty = () => {
   randomCardsArr.forEach((element, index) => {
@@ -145,13 +156,83 @@ const getEasyHardDifficulty = () => {
   return randomCardsArr;
 };
 
+let counterEasyHardCardObj = {
+  easy: {
+    green: null,
+    brown: null,
+    blue: null,
+  },
+  hard: {
+    green: null,
+    brown: null,
+    blue: null,
+  },
+};
+
+let greenCardsCheck = [];
+let brownCardsCheck = [];
+let blueCardsCheck = [];
+let color = '';
+
+const countEasyHardCard = (counter) => {
+  let arr = [];
+  if (counter === 0) {
+    arr = greenCardsCheck;
+    color = 'green';
+  } else if (counter === 1) {
+    arr = brownCardsCheck;
+    color = 'brown';
+  } else if (counter === 2) {
+    arr = blueCardsCheck;
+    color = 'blue';
+  } else {
+    return counterEasyHardCardObj;
+  }
+
+  randomCardsArr.forEach((element) => {
+    if (element.color === color && element.difficulty === include) {
+      arr.push(element);
+      counterEasyHardCardObj[include][color] = arr.length;
+    }
+    }
+  );
+  counter++;
+  countEasyHardCard(counter);
+};
+
+const numGreenEasyCards = 5;
+const numBrownEasyCards = 5;
+const numBlueEasyCards = 4;
+const numGreenHardCards = 5;
+const numBrownHardCards = 5;
+const numBlueHardCards = 4;
 
 const getVeryEasyHardDifficulty = () => {
+  let maxCounter = 0;
   randomCardsArr.forEach((element, index) => {
-    // console.log('1 элемент', element);
-    if (element.difficulty === exclude) {
-      // console.log('2 элемент с щупальцем', element);
-      let colorOfCard = element.color;
+    let colorOfCard = element.color;
+    if (include === 'easy') {
+      if (colorOfCard === 'green') {
+        maxCounter = numGreenEasyCards;
+      } else if (colorOfCard === 'brown') {
+        maxCounter = numBrownEasyCards;
+      } else if (colorOfCard === 'blue') {
+        maxCounter = numBlueEasyCards;
+      }
+    } else if (include === 'hard'){
+      if (colorOfCard === 'green') {
+        maxCounter = numGreenHardCards;
+      } else if (colorOfCard === 'brown') {
+        maxCounter = numBrownHardCards;
+      } else if (colorOfCard === 'blue') {
+        maxCounter = numBlueHardCards;
+      }
+    }
+    if (element.difficulty === include) {
+      return;
+    } else if (element.difficulty === 'normal' && counterEasyHardCardObj[include][colorOfCard] === maxCounter) {
+      return;
+    } else {
       let obj = [];
       let checkIncl1 = Boolean;
       let checkIncl2 = Boolean;
@@ -170,39 +251,49 @@ const getVeryEasyHardDifficulty = () => {
 
       do {
         num =  Math.floor(Math.random() * (max - min + 1)) + min;
-        // console.log('3 на что меняем', obj[num]);
         checkIncl1 = randomCardsArr.includes(obj[num]);
         checkIncl2 = !checkIncl1;
-        // console.log('4 есть ли такой уже', checkIncl1);
-        checkDiff = obj[num].difficulty !== exclude;
-        // console.log('5 простая ли карта', checkDiff);
+        if (counterEasyHardCardObj[include][colorOfCard] < maxCounter) {
+          checkDiff = obj[num].difficulty === include;
+        } else {
+          checkDiff = obj[num].difficulty === 'normal';
+        }
+
         if(checkIncl2 && checkDiff){
-          // console.log('6 совпадает ли с 2', randomCardsArr[index]);
           randomCardsArr.splice(index, 1);
           randomCardsArr.splice(index, 0, obj[num]);
+          if (obj[num].difficulty === include) {
+            counterEasyHardCardObj[include][colorOfCard]++;
+          }
         }
       }
       while(!(checkIncl2 && checkDiff));
-      // console.log('6 итоговый массив', randomCardsArr);
     }
   });
-  // console.log('7 итоговый массив', randomCardsArr);
   return randomCardsArr;
 };
 
 
 
 const getCardsOfDifficulty = () => {
-  if (gameInformation.idDifficulty === 'easy') {
+  if (gameInformation.idDifficulty === 'veryeasy') {
+    exclude = 'hard';
+    include = 'easy';
+    countEasyHardCard(counerForEasyHardCards);
+    return getVeryEasyHardDifficulty();
+  } else if (gameInformation.idDifficulty === 'easy') {
     exclude = 'hard';
     return getEasyHardDifficulty();
-  }
-  if (gameInformation.idDifficulty === 'normal') {
+  } else if (gameInformation.idDifficulty === 'normal') {
     return;
-  }
-  if (gameInformation.idDifficulty === 'hard') {
+  } else if (gameInformation.idDifficulty === 'hard') {
     exclude = 'easy';
     return getEasyHardDifficulty();
+  } else if (gameInformation.idDifficulty === 'veryhard') {
+    exclude = 'easy';
+    include = 'hard';
+    countEasyHardCard(counerForEasyHardCards);
+    return getVeryEasyHardDifficulty();
   }
 };
 
@@ -218,6 +309,11 @@ const activeDifficulty = (event) => {
     deckContainer.classList.add('hidden');
     randomCardsArr = [];
     getCardsArr(counterOfCards);
+    greenCardsCheck = [];
+    brownCardsCheck = [];
+    blueCardsCheck = [];
+    color = '';
+    counterEasyHardCardObj = {easy: {green: null, brown: null, blue: null}, hard: {green: null, brown: null, blue: null}};
     getCardsOfDifficulty();
     cardPlace.style.backgroundImage = ``;
     console.log(`Выбран Древний ${gameInformation.idGod.charAt(0).toUpperCase()}${gameInformation.idGod.slice(1)} и сложность ${gameInformation.idDifficulty.charAt(0).toUpperCase()}${gameInformation.idDifficulty.slice(1)}!`);
@@ -286,6 +382,48 @@ const getCardsForStages = (counter) => {
   } else if (counter === 2) {
     obj = ancientsData[gameInformation.numGodInArr].thirdStage;
   } else {
+    for (let m = 0; m <= 2; m++){
+      let arr = [];
+      let arrFilter = [];
+      let color = '';
+      if (m === 0) {
+        arrFilter = firstStageCardsArr;
+      } else if (m === 1) {
+        arrFilter = secondStageCardsArr;
+      } else if (m === 2) {
+        arrFilter = thirdStageCradsArr;
+      }
+      for (let u = 0; u <= 2; u++) {
+        if (u === 0) {
+          color = 'green';
+        } else if (u === 1) {
+          color = 'brown';
+        } else if (u === 2) {
+          color = 'blue';
+        }
+        arr = arrFilter.filter(element => element.color === color);
+        if (m === 0 && u === 0) {
+          firstGreen.textContent = arr.length;
+        } else if (m === 0 && u === 1) {
+          firstBrown.textContent = arr.length;
+        } else if (m === 0 && u === 2) {
+          firstBlue.textContent = arr.length;
+        } else if (m === 1 && u === 0) {
+          secondGreen.textContent = arr.length;
+        } else if (m === 1 && u === 1) {
+          secondBrown.textContent = arr.length;
+        } else if (m === 1 && u === 2) {
+          secondBlue.textContent = arr.length;
+        } else if (m === 2 && u === 0) {
+          thirdGreen.textContent = arr.length;
+        } else if (m === 2 && u === 1) {
+          thirdBrown.textContent = arr.length;
+        } else if (m === 2 && u === 2) {
+          thirdBlue.textContent = arr.length;
+        } 
+      }
+    }
+
     allStageCardsArr.push(shuffleArray(firstStageCardsArr));
     allStageCardsArr.push(shuffleArray(secondStageCardsArr));
     allStageCardsArr.push(shuffleArray(thirdStageCradsArr));
@@ -323,6 +461,11 @@ const getCardsForStages = (counter) => {
   counter++;
   getCardsForStages(counter);
 };
+
+/* Трекер карт */
+
+
+
 
 const setBg = () => {
   if (flattenStageArr.length > 0) {
